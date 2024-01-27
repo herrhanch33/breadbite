@@ -7,7 +7,7 @@ layout: page
 <div id="results"></div>
 <script>
   async function loaded(reader) {
-    const response = await fetch('https://hanch9133-test.hf.space/--replicas/h8lpk/', {
+    const response = await fetch('https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png', {
       method: "POST", body: JSON.stringify({ "data": [reader.result] }),
       headers: { "Content-Type": "application/json" }
     });
