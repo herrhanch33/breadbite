@@ -5,20 +5,28 @@ layout: page
 
 <input id="photo" type="file">
 <div id="results"></div>
+<script src="https://unpkg.com/@gradio/client"></script>
 <script>
   async function loaded(reader) {
-    const response = await fetch('https://raw.githubusercontent.com/gradio-app/gradio/main/test/test_files/bus.png', {
-      method: "POST", body: JSON.stringify({ "data": [reader.result] }),
-      headers: { "Content-Type": "application/json" }
-    });
-    const json = await response.json();
-    const label = json['data'][0]['confidences'][0]['label'];
-    results.innerHTML = `<br/><img src="${reader.result}" width="300"> <p>${label}</p>`
+    const app = await gr.client("https://hanch9133-test.hf.space/--replicas/h8lpk/");
+
+    // Convert the image data to a Blob
+    const imageBlob = await fetch(reader.result).then(response => response.blob());
+
+    // Make a prediction using Gradio client
+    const result = await app.predict("/predict", [imageBlob]);
+    const label = result.data[0].confidences[0].label;
+
+    // Display results
+    results.innerHTML = `<br/><img src="${reader.result}" width="300"> <p>${label}</p>`;
   }
+
   function read() {
     const reader = new FileReader();
     reader.addEventListener('load', () => loaded(reader))
     reader.readAsDataURL(photo.files[0]);
   }
-  photo.addEventListener('input', read);
+
+  // Add event listener to the file input
+  photo.addEventListener('change', read);
 </script>
